@@ -1,6 +1,8 @@
 import asyncio
 import os
 import random
+from datetime import timedelta, datetime
+
 import yaml
 
 from loguru import logger
@@ -38,6 +40,14 @@ def initialize_settings() -> None:
         logger.error("launch_per_24h should be an integer and greater than 0.")
         exit(1)
 
+    if not isinstance(config["concurrency_limit"], int) or config["concurrency_limit"] < 1:
+        logger.error("concurrency_limit should be an integer and greater than 0.")
+        exit(1)
+
+    if not isinstance(config["sleep_between_tasks"], bool) or config["sleep_between_tasks"] is None:
+        logger.error("sleep_between_tasks should be a boolean.")
+        exit(1)
+
     if config["use_proxy"]:
         with open(proxy_path, "r") as fp:
             config["proxies"] = [proxy.strip() for proxy in fp.readlines()]
@@ -58,12 +68,13 @@ async def run_task(value: tuple[str, str], interval: int, queue: asyncio.Queue =
             # Delay between each launch
             delay = random.uniform(interval * i, interval * (i + 1))
 
-            # Get proxy from queue if use_proxy is True
-            logger.info(
-                f"Waiting for {delay * 3600} seconds to run task with url {value[1]}"
-            )
+            # Get proxy from queue if "use_proxy" is True
+            if config["sleep_between_tasks"]:
+                logger.info(
+                    f"Waiting for {datetime.now() + timedelta(seconds=delay)} seconds to run task with url {value[1]}"
+                )
+                await asyncio.sleep(delay * 3600)
 
-            await asyncio.sleep(delay * 3600)
             logger.info(f"Running task with url {value[1]}")
             proxy = await queue.get() if queue else None
             await Automation(

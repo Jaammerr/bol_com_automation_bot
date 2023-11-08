@@ -2,3 +2,4 @@ playwright~=1.39.0
 loguru~=0.7.2
 xlwings~=0.30.12
 PyYAML~=6.0.1
+playwright_stealth

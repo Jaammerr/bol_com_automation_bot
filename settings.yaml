@@ -1,3 +1,4 @@
 use_proxy: False
+sleep_between_tasks: True
 launch_per_24h: 1
 concurrency_limit: 3
