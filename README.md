@@ -34,6 +34,7 @@ Link must be in full format, example: https://www.bol.com/nl/nl/p/kingsowned-wim
 ## Config (settings.yaml):
 ~~~yaml
 use_proxy: True/False # If True - script will use proxies from proxies.txt file, format "ip:port:user:pass"
+sleep_between_tasks: True/False # If True - script will sleep between tasks 
 launch_per_24h: 100 # How many times every value (from Excel) will be executed per 24 hours
 concurrency_limit: 3 # How many tasks can be executed at the same time (Threads)
 ~~~
