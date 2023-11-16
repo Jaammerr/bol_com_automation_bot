@@ -6,7 +6,7 @@ from datetime import timedelta, datetime
 import yaml
 
 from loguru import logger
-from src.get_excel_data import get_excel_data
+from src.get_csv_data import get_csv_data
 from src.main import Automation
 
 try:
@@ -71,7 +71,7 @@ async def run_task(value: tuple[str, str], interval: int, queue: asyncio.Queue =
             # Get proxy from queue if "use_proxy" is True
             if config["sleep_between_tasks"]:
                 logger.info(
-                    f"Waiting for {datetime.now() + timedelta(seconds=delay)} seconds to run task with url {value[1]}"
+                    f"Waiting for {datetime.now() + timedelta(seconds=delay * 3600)} seconds to run task with url {value[1]}"
                 )
                 await asyncio.sleep(delay * 3600)
 
@@ -100,7 +100,7 @@ async def run_safe_task(
 
 async def main() -> None:
     interval = 24 / config["launch_per_24h"]
-    values = get_excel_data()
+    values = get_csv_data()
 
     if config["use_proxy"]:
         queue = asyncio.Queue()
